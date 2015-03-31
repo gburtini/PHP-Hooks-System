@@ -1,31 +1,44 @@
-PHP Hook / Filter System - a class for binding events to actions.
+PHP Hooks and Filters System
+============================
+
+_Event-driven programming, a plugin architecture, hooks, filters, all wrapped in to a simple, efficient and clean Composer-ready interface._
 
 This is an elegant way of coding plugin architectures or other decoupled software solutions. The class provides three major methods: bind, run and filter; combined, these allow you to integrate in to existing systems without interfering with their existing code.
 
-                 * bind(string $hook, callback $callback, int $priority) - binds a callback to a hook
-                 * run(string $hook, array $parameters) - executes all the functions bound to a given hook
-                 * filter(string $hook, object $value, array $parameters) - executes all the functions bound to a given hook, passing in $value each time, and finally return the value
+Installation
+------------
 
-The designed use case is that throughout your existing software, you will call Hooks::filter and Hooks::run where you want to allow users to hook with a specified $hook value. Then users can call Hooks::bind() anytime before your code runs to associate code with the various locations -- filters will return the value (so that a function can change it) and run calls will simply run functions with no in-code side effects.
+Everything you need is contained within the single file ``hooks.php``, but the most convenient way to install is with composer:
 
-A nice future feature would be to enforce some sort of constraints on what these binds can do -- allowing untrusted code to run in some sort of quasi-sandbox; for example, the filters could check to ensure the value stayed integral or stayed matching a particular regular expression.
+    composer require gburtini/hooks
+    
+    
 
-== License ==
+Usage
+-----
+* ``bind(string $hook, callback $callback, int $priority)`` - binds a callback to a hook
+* ``run(string $hook, array $parameters)`` - executes all the functions bound to a given hook
+* ``filter(string $hook, object $value, array $parameters)`` - executes all the functions bound to a given hook, passing in $value each time, and finally return the value
 
-    Copyright (C) 2012 Giuseppe Burtini
+The designed use case is that throughout your existing software, you will call ``Hooks::filter`` and ``Hooks::run`` where you want to allow users to hook with a specified ``$hook`` value. Then users can call ``Hooks::bind()`` anytime before your code runs to associate code with the various locations -- filters will return the value (so that a function can change it) and run calls will simply run functions with no in-code side effects.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
+Future Work
+-----------
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+A nice future feature would be to enforce some sort of constraints on what these binds can do -- allowing "untrusted" (in the sense of the data) code to run in some sort of quasi-sandbox; for example, the filters could check to ensure the value was constrained to a particular type, range or callback validation.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+Sorting can be called less frequently. If nothing has changed, it is unnecessary to call the sort function again. That said, the used quicksort variant should be rapid on already sorted data.
+
+
+License
+-------
+Copyright (C) 2012-2015 Giuseppe Burtini
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
