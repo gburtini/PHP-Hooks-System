@@ -1,4 +1,5 @@
 <?php
+	namespace gburtini;
 	class Hooks {
 		protected static $hooks = array();
 
