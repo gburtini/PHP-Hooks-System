@@ -1,5 +1,5 @@
 <?php
-	require_once "../hook.php";
+	require_once "../src/hook.php";
 	function HookTestHelper_addOne($a) {
 		return $a+1;
 	}
