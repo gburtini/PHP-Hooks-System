@@ -1,5 +1,5 @@
 <?php
-	require_once dirname(__FILE__) . "/../src/hook.php";
+	require_once dirname(__FILE__) . "/../src/hooks.php";
 	use gburtini\Hooks;
  
 	function HookTestHelper_addOne($a) {
