@@ -12,7 +12,10 @@
                                 	self::clear($key);
 				}
 			} else {
-				unset(self::$hooks[$hook]);
+				$hooks = self::processKeys($hook);
+				foreach($hooks as $h) {
+					unset(self::$hooks[$h]);
+				}
 			}
 		}
 
@@ -25,13 +28,18 @@
 			if(!is_callable($callback))
 				return false;
 
-			if(!isset(self::$hooks[$hook]))
-				self::$hooks[$hook] = array();
+			$hooks = self::processKeys($hook);
+			foreach($hooks as $hook) {
+				if(!isset(self::$hooks[$hook]))
+					self::$hooks[$hook] = array();
 
-			if(!isset(self::$hooks[$hook][$priority]))
-				self::$hooks[$hook][$priority] = array();
+				if(!isset(self::$hooks[$hook][$priority]))
+					self::$hooks[$hook][$priority] = array();
 
-			self::$hooks[$hook][$priority][] = $callback;			
+				self::$hooks[$hook][$priority][] = $callback;			
+			}
+			
+
 			return true;
 		}
 	
@@ -42,23 +50,25 @@
 		 * an ID. Returns the number of hooks executed -- return false from a hook to have it not counted.
 		 */
 		public static function run($hook, $parameters=array()) {
-			self::sortHooks($hook);
+			$hooks = self::processKeys($hook);
 			$count = 0;
-			if(isset(self::$hooks[$hook])) {
-				if(!is_array($parameters)) {
-					$parameters = func_get_args();
-					array_shift($parameters);
-				}
-				foreach(self::$hooks[$hook] as $hooks) {	
-					// hooks arrays will come in priority-sorted order here
-					foreach($hooks as $cb) {
-						if(@call_user_func_array($cb, $parameters) !== false) {
-							$count++;
+			foreach($hooks as $hook) {
+				self::sortHooks($hook);
+				if(isset(self::$hooks[$hook])) {
+					if(!is_array($parameters)) {
+						$parameters = func_get_args();
+						array_shift($parameters);
+					}
+					foreach(self::$hooks[$hook] as $hooks) {	
+						// hooks arrays will come in priority-sorted order here
+						foreach($hooks as $cb) {
+							if(@call_user_func_array($cb, $parameters) !== false) {
+								$count++;
+							}
 						}
 					}
 				}
 			}
-
 			return $count;
 		}
 
@@ -66,24 +76,52 @@
 		/**
 		 * filter(string $hook, object $value, array $parameters) - executes all the functions bound to a given hook, passing in $value each time
 		 *
-		 * This iteratively processes a value $value by passing it to callback functions.
+		 * This iteratively processes a value $value by passing it to callback functions. Warning: passing an array as hook will pass the value 
+		 * through all the hooks.
 		 */
 		public static function filter($hook, $value, $parameters=array()) {
-			self::sortHooks($hook);
-                        if(isset(self::$hooks[$hook])) {
-				if(!is_array($parameters)) {
-					$parameters = func_get_args();
-					array_shift($parameters);
-					array_shift($parameters);
-				}
-				foreach(self::$hooks[$hook] as $hooks) {
-					foreach($hooks as $cb) {
-						array_unshift($parameters, $value);
-						$value = @call_user_func_array($cb, $parameters);
+			$hooks = self::processKeys($hook);
+			foreach($hooks as $hook) {
+				self::sortHooks($hook);
+        	                if(isset(self::$hooks[$hook])) {
+					if(!is_array($parameters)) {
+						$parameters = func_get_args();
+						array_shift($parameters);
+						array_shift($parameters);
+					}
+					foreach(self::$hooks[$hook] as $hooks) {
+						foreach($hooks as $cb) {
+							array_unshift($parameters, $value);
+							$value = @call_user_func_array($cb, $parameters);
+						}
 					}
 				}
 			}
 			return $value;
+		}
+
+		/**
+	 	 * array processKeys(string, integer or array $hook) - turns a user specified hook in to a ready to use array of array keys.
+		 * 
+		 * This is used internally to allow users to pass hooks as any array indexable type
+		 * or an array of indexable types. In the future, it could be used to further preprocess
+		 * hook keys if necessary.
+	 	 *
+		 * This function also throws an exception which bubbles up iff a hook key is specified
+		 * that is not a valid array key (that is, it is an object or a nested array). We 
+		 * currently do not validate the type of nested objects if the hook is already passed
+		 * as an array.
+		 * 
+		 * Warning: note the properties of the PHP array for weird types http://php.net/manual/en/language.types.array.php
+		 * in particular, floats are treated as truncated and bools are cast to possibly override other keys.
+		 */
+		protected static function processKeys($hook) {
+			if(is_object($hook) || $hook === null) 
+				throw new Exception("Invalid hook index type.");
+			if(is_array($hook)) 
+				return $hook;
+			// TODO: possibly validate internal members.
+			return array($hook);
 		}
 
 		/**
@@ -118,6 +156,5 @@
 				return self::$hooks[$hook];
 			}
 		}
-		
 	}
 ?>
