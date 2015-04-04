@@ -1,7 +1,7 @@
 <?php
 	namespace gburtini;
 	class Hooks {
-		protected static $hooks = array();
+		protected static $hooks = [];
 
 		/**
 		 * clear(string $hook) - clears all callbacks associated with a given hook
@@ -31,10 +31,10 @@
 			$hooks = self::processKeys($hook);
 			foreach($hooks as $hook) {
 				if(!isset(self::$hooks[$hook]))
-					self::$hooks[$hook] = array();
+					self::$hooks[$hook] = [];
 
 				if(!isset(self::$hooks[$hook][$priority]))
-					self::$hooks[$hook][$priority] = array();
+					self::$hooks[$hook][$priority] = [];
 
 				self::$hooks[$hook][$priority][] = $callback;			
 			}

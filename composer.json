@@ -1,8 +1,8 @@
 {
     "name": "gburtini/hooks",
     "type": "library",
-    "description": "Hooks, filters, event-driven programming, plugin architecture all in a clean easy interface.",
-    "keywords": ["hook", "hooks", "filter", "filters", "plugin", "plugins", "event", "events", "event-driven programming"],
+    "description": "Hooks, plugins, filters, event-driven programming, plugin architecture all in a clean easy interface.",
+    "keywords": ["hook", "hooks", "plugins", "filter", "filters", "plugin", "plugins", "event", "events", "event-driven programming"],
     "homepage": "http://github.com/gburtini/PHP-Hooks-System",
     "license": "GPL",
     "authors": [
@@ -14,11 +14,12 @@
         }
     ],
     "require": {
-        "php": ">=5.0.0"
+        "php": ">=5.4.0"
     },
     "autoload": {
         "psr-0": {
-            "Hooks": "src"
+            "Hooks": "src",
+	    "Plugins": "src"
         }
     }
 }

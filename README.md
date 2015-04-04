@@ -5,6 +5,8 @@ _Event-driven programming, a plugin architecture, hooks, filters, all wrapped in
 
 This is an elegant way of coding plugin architectures or other decoupled software solutions. The class provides three major methods: bind, run and filter; combined, these allow you to integrate in to existing systems without interfering with their existing code.
 
+There's also a plugin loader in ``plugins.php`` (``gburtini\Plugins``) which can be used to load a directory of optional code. Use is simple: ``Plugins::load("directory")`` will traverse the directory and load all non-disabled (~, . prefix) folders containing a ``init.php`` file.
+
 Installation
 ------------
 
@@ -13,7 +15,6 @@ Everything you need is contained within the single file ``hooks.php``, but the m
     composer require gburtini/hooks
     
     
-
 Usage
 -----
 * ``bind(string $hook, callback $callback, int $priority)`` - binds a callback to a hook
