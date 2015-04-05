@@ -19,7 +19,6 @@
     "autoload": {
         "psr-0": {
             "gburtini\\Hooks": "src",
-	    "gburtini\\Plugins": "src"
         }
     }
 }

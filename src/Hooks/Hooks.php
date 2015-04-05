@@ -1,5 +1,5 @@
 <?php
-	namespace gburtini;
+	namespace gburtini\Hooks;
 	class Hooks {
 		protected static $hooks = [];
 

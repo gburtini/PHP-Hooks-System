@@ -1,7 +1,7 @@
 <?php
-	namespace gburtini;
+	namespace gburtini\Hooks;
 	require_once dirname(__FILE__) . "/hooks.php";
-	use gburtini\Hooks;
+	use gburtini\Hooks\Hooks;
 
 	/**
 	 * The bare minimum plugin loader. It would be valuable for some cases to extend this to support WordPress style configuration (structured headers),
