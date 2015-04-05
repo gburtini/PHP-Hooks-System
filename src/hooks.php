@@ -7,16 +7,21 @@
 		 * clear(string $hook) - clears all callbacks associated with a given hook
 		 */
 		public static function clear($hook = null) {
+			self::run("hooks-clear");
 			if($hook === null) {
+				self::run("hooks-clear-all");
                                 foreach(self::$hooks as $key=>$value) {
                                 	self::clear($key);
 				}
 			} else {
 				$hooks = self::processKeys($hook);
 				foreach($hooks as $h) {
+					self::run(["hooks-clear-one", "hooks-clear-$h"], ["hook"=>$h]);
 					unset(self::$hooks[$h]);
+					self::run(["hooks-clear-one-done", "hooks-clear-$h-done"], ["hook"=>$h]);
 				}
 			}
+			self::run("hooks-clear-done");
 		}
 
 		/**
@@ -29,6 +34,7 @@
 				return false;
 
 			$hooks = self::processKeys($hook);
+			self::run("hooks-bind");
 			foreach($hooks as $hook) {
 				if(!isset(self::$hooks[$hook]))
 					self::$hooks[$hook] = [];
@@ -38,6 +44,7 @@
 
 				self::$hooks[$hook][$priority][] = $callback;			
 			}
+			self::run("hooks-bind-done");
 			
 
 			return true;

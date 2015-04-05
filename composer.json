@@ -18,8 +18,8 @@
     },
     "autoload": {
         "psr-0": {
-            "Hooks": "src",
-	    "Plugins": "src"
+            "gburtini\\Hooks": "src",
+	    "gburtini\\Plugins": "src"
         }
     }
 }
