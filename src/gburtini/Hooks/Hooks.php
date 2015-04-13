@@ -61,7 +61,7 @@
 			}
 
 			if(self::$debugLevel & self::DEBUG_BINDS)
-				self::debug("Binding $callback to $hook at priority $priority.");
+				self::debug("Binding " . var_export($callback, true) . " to $hook at priority $priority.");
 
 			$hooks = self::processKeys($hook);
 			self::run("hooks-bind");
@@ -105,7 +105,7 @@
 						// hooks arrays will come in priority-sorted order here
 						foreach($hooks as $cb) {
 							if(self::$debugLevel & self::DEBUG_CALLS)
-								self::debug("Calling $cb with priority $priority on hook $hook.");
+								self::debug("Calling " . var_export($cb, true) . " with priority $priority on hook $hook.");
 							if(@call_user_func_array($cb, $parameters) !== false) {
 								$count++;
 							}
@@ -143,7 +143,7 @@
 					foreach(self::$hooks[$hook] as $priority=>$hooks) {
 						foreach($hooks as $cb) {
 							if(self::$debugLevel & self::DEBUG_CALLS)
-								self::debug("Calling $cb with priority $priority on filter $hook.");
+								self::debug("Calling " . var_export($cb, true) . " with priority $priority on filter $hook.");
 							array_unshift($parameters, $value);
 							$value = @call_user_func_array($cb, $parameters);
 						}
