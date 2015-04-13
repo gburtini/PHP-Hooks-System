@@ -11,9 +11,21 @@
 		protected static $debugLevel = self::DEBUG_NONE;
 		protected static $debugMethod = "print";
 		protected static function debug($string) {
-			if(self::$debugMethod == "print") {
-				echo $string . "\n";
-			} else { $dm = self::$debugMethod; $dm($string); }
+			try { 
+				if(self::$debugMethod == "print") {
+					echo $string . "\n";
+				} else { $dm = self::$debugMethod; $dm($string); }
+			} catch(Exception $e) {
+				self::debug("Tried to debug output, but ran in to an unprintable.");
+			}
+		}
+		protected static function export($string) {
+			try {
+				return var_export($string, true);
+			} catch(Exception $e) {
+				return "...";
+			}
+
 		}
 
 		public static function setDebugLevel($debug_level = self::DEBUG_NONE) { 
@@ -60,8 +72,9 @@
 				throw new \InvalidArgumentException("Callback is not callable on attempt to bind to $hook.");
 			}
 
-			if(self::$debugLevel & self::DEBUG_BINDS)
-				self::debug("Binding " . var_export($callback, true) . " to $hook at priority $priority.");
+			if(self::$debugLevel & self::DEBUG_BINDS) {
+				self::debug("Binding " . self::export($callback) . " to $hook at priority $priority.");
+			}
 
 			$hooks = self::processKeys($hook);
 			self::run("hooks-bind");
@@ -88,7 +101,7 @@
 		 */
 		public static function run($hook, $parameters=array()) {
 			if(self::$debugLevel & self::DEBUG_INTERACTION)
-				self::debug("Hooks::run(hook=$hook, parameters=" . var_export($parameters, true) . ")");
+				self::debug("Hooks::run(hook=$hook, parameters=" . self::export($parameters) . ")");
 
 			if(self::$debugLevel & self::DEBUG_EVENTS)
 				self::debug("Running hook $hook.");
@@ -105,7 +118,7 @@
 						// hooks arrays will come in priority-sorted order here
 						foreach($hooks as $cb) {
 							if(self::$debugLevel & self::DEBUG_CALLS)
-								self::debug("Calling " . var_export($cb, true) . " with priority $priority on hook $hook.");
+								self::debug("Calling " . self::export($cb) . " with priority $priority on hook $hook.");
 							if(@call_user_func_array($cb, $parameters) !== false) {
 								$count++;
 							}
@@ -127,10 +140,10 @@
 		 */
 		public static function filter($hook, $value, $parameters=array()) {
 			if(self::$debugLevel & self::DEBUG_INTERACTION)
-				self::debug("Hooks::filter(hook=$hook, value=$value, parameters=" . var_export($parameters, true) . ")");
+				self::debug("Hooks::filter(hook=$hook, value=$value, parameters=" . self::export($parameters) . ")");
 			
 			if(self::$debugLevel & self::DEBUG_EVENTS)
-				self::debug("Running filter $hook on " . var_export($value, true) . ".");
+				self::debug("Running filter $hook on " . self::export($value) . ".");
 			$hooks = self::processKeys($hook);
 			foreach($hooks as $hook) {
 				self::sortHooks($hook);
@@ -143,7 +156,7 @@
 					foreach(self::$hooks[$hook] as $priority=>$hooks) {
 						foreach($hooks as $cb) {
 							if(self::$debugLevel & self::DEBUG_CALLS)
-								self::debug("Calling " . var_export($cb, true) . " with priority $priority on filter $hook.");
+								self::debug("Calling " . self::export($cb) . " with priority $priority on filter $hook.");
 							array_unshift($parameters, $value);
 							$value = @call_user_func_array($cb, $parameters);
 						}
@@ -152,7 +165,7 @@
 			}
 			
 			if(self::$debugLevel & self::DEBUG_EVENTS)
-				self::debug("Ran $count filters for $hook. Result is " . var_export($value, true) . ".");
+				self::debug("Ran $count filters for $hook. Result is " . self::export($value) . ".");
 			return $value;
 		}
 
