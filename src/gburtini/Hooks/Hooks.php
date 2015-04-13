@@ -66,7 +66,7 @@
 		 */
 		public static function bind($hook, $callback, $priority = 10) {
 			if(self::$debugLevel & self::DEBUG_INTERACTION)
-				self::debug("Hooks::bind(hook=$hook, callback=$callback, priority=$priority);");
+				self::debug("Hooks::bind(hook=$hook, callback=" . self::export($callback) . ", priority=$priority);");
 
 			if(!is_callable($callback)) {
 				throw new \InvalidArgumentException("Callback is not callable on attempt to bind to $hook.");
