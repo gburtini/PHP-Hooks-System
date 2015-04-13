@@ -1,6 +1,6 @@
 <?php
 	namespace gburtini\Hooks;
-	require_once dirname(__FILE__) . "/hooks.php";
+	require_once dirname(__FILE__) . "/Hooks.php";
 	use gburtini\Hooks\Hooks;
 
 	/**
