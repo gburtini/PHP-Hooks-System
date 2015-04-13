@@ -11,24 +11,24 @@
 		protected static $debugLevel = self::DEBUG_NONE;
 		protected static $debugMethod = "print";
 		protected static function debug($string) {
-			if($this->debugMethod == "print")
+			if(self::debugMethod == "print") {
 				echo $string . "\n";
-			else $this->debugMethod($string);
+			} else { $dm = self::debugMethod; $dm($string); }
 		}
 
 		public static function setDebugLevel($debug_level = self::DEBUG_NONE) { 
-			if($this->debugLevel & self::DEBUG_INTERACTION)
-				$this->debug("Hooks::setDebugLevel(debug_level=$debug_level);");
+			if(self::debugLevel & self::DEBUG_INTERACTION)
+				self::debug("Hooks::setDebugLevel(debug_level=$debug_level);");
 
-			$this->debugLevel = $debug_level;
+			self::debugLevel = $debug_level;
 		}
 
 		/**
 		 * clear(string $hook) - clears all callbacks associated with a given hook
 		 */
 		public static function clear($hook = null) {
-			if($this->debugLevel & self::DEBUG_INTERACTION)
-				$this->debug("Hooks::clear(hook=$hook);");
+			if(self::debugLevel & self::DEBUG_INTERACTION)
+				self::debug("Hooks::clear(hook=$hook);");
 
 			self::run("hooks-clear");
 			if($hook === null) {
@@ -53,15 +53,15 @@
 		 * Associates a function with a given hook. Hooks are just strings as unique identifiers.
 		 */
 		public static function bind($hook, $callback, $priority = 10) {
-			if($this->debugLevel & self::DEBUG_INTERACTION)
-				$this->debug("Hooks::bind(hook=$hook, callback=$callback, priority=$priority);");
+			if(self::debugLevel & self::DEBUG_INTERACTION)
+				self::debug("Hooks::bind(hook=$hook, callback=$callback, priority=$priority);");
 
 			if(!is_callable($callback)) {
 				throw new \InvalidArgumentException("Callback is not callable on attempt to bind to $hook.");
 			}
 
-			if($this->debugLevel & self::DEBUG_BINDS)
-				$this->debug("Binding $callback to $hook at priority $priority.");
+			if(self::debugLevel & self::DEBUG_BINDS)
+				self::debug("Binding $callback to $hook at priority $priority.");
 
 			$hooks = self::processKeys($hook);
 			self::run("hooks-bind");
@@ -87,11 +87,11 @@
 		 * an ID. Returns the number of hooks executed -- return false from a hook to have it not counted.
 		 */
 		public static function run($hook, $parameters=array()) {
-			if($this->debugLevel & self::DEBUG_INTERACTION)
-				$this->debug("Hooks::run(hook=$hook, parameters=" . var_export($parameters, true) . ")");
+			if(self::debugLevel & self::DEBUG_INTERACTION)
+				self::debug("Hooks::run(hook=$hook, parameters=" . var_export($parameters, true) . ")");
 
-			if($this->debugLevel & self::DEBUG_EVENTS)
-				$this->debug("Running hook $hook.");
+			if(self::debugLevel & self::DEBUG_EVENTS)
+				self::debug("Running hook $hook.");
 			$hooks = self::processKeys($hook);
 			$count = 0;
 			foreach($hooks as $hook) {
@@ -104,8 +104,8 @@
 					foreach(self::$hooks[$hook] as $priority=>$hooks) {	
 						// hooks arrays will come in priority-sorted order here
 						foreach($hooks as $cb) {
-							if($this->debugLevel & self::DEBUG_CALLS)
-								$this->debug("Calling $cb with priority $priority on hook $hook.");
+							if(self::debugLevel & self::DEBUG_CALLS)
+								self::debug("Calling $cb with priority $priority on hook $hook.");
 							if(@call_user_func_array($cb, $parameters) !== false) {
 								$count++;
 							}
@@ -113,8 +113,8 @@
 					}
 				}
 			}
-			if($this->debugLevel & self::DEBUG_EVENTS)
-				$this->debug("Ran $count callbacks for $hook.");
+			if(self::debugLevel & self::DEBUG_EVENTS)
+				self::debug("Ran $count callbacks for $hook.");
 			return $count;
 		}
 
@@ -126,11 +126,11 @@
 		 * through all the hooks.
 		 */
 		public static function filter($hook, $value, $parameters=array()) {
-			if($this->debugLevel & self::DEBUG_INTERACTION)
-				$this->debug("Hooks::filter(hook=$hook, value=$value, parameters=" . var_export($parameters, true) . ")");
+			if(self::debugLevel & self::DEBUG_INTERACTION)
+				self::debug("Hooks::filter(hook=$hook, value=$value, parameters=" . var_export($parameters, true) . ")");
 			
-			if($this->debugLevel & self::DEBUG_EVENTS)
-				$this->debug("Running filter $hook on " . var_export($value, true) . ".");
+			if(self::debugLevel & self::DEBUG_EVENTS)
+				self::debug("Running filter $hook on " . var_export($value, true) . ".");
 			$hooks = self::processKeys($hook);
 			foreach($hooks as $hook) {
 				self::sortHooks($hook);
@@ -142,8 +142,8 @@
 					}
 					foreach(self::$hooks[$hook] as $priority=>$hooks) {
 						foreach($hooks as $cb) {
-							if($this->debugLevel & self::DEBUG_CALLS)
-								$this->debug("Calling $cb with priority $priority on filter $hook.");
+							if(self::debugLevel & self::DEBUG_CALLS)
+								self::debug("Calling $cb with priority $priority on filter $hook.");
 							array_unshift($parameters, $value);
 							$value = @call_user_func_array($cb, $parameters);
 						}
@@ -151,8 +151,8 @@
 				}
 			}
 			
-			if($this->debugLevel & self::DEBUG_EVENTS)
-				$this->debug("Ran $count filters for $hook. Result is " . var_export($value, true) . ".");
+			if(self::debugLevel & self::DEBUG_EVENTS)
+				self::debug("Ran $count filters for $hook. Result is " . var_export($value, true) . ".");
 			return $value;
 		}
 
