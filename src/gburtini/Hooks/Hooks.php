@@ -7,9 +7,11 @@
 		const DEBUG_BINDS = 4;		// outputs a list of every bind
 		const DEBUG_INTERACTION = 8;	// outputs every function call within the class
 		const DEBUG_ALL = 15; // DEBUG_INTERACTION + DEBUG_BINDS + DEBUG_CALLS + DEBUG_EVENTS;	
+
 		protected static $hooks = [];
 		protected static $debugLevel = self::DEBUG_NONE;
 		protected static $debugMethod = "print";
+
 		protected static function debug($string) {
 			try { 
 				if(self::$debugMethod == "print") {
@@ -149,7 +151,7 @@
 			foreach($hooks as $hook) {
 				$count = 0;
 				self::sortHooks($hook);
-        	                if(isset(self::$hooks[$hook])) {
+				if(isset(self::$hooks[$hook])) {
 					if(!is_array($parameters)) {
 						$parameters = func_get_args();
 						array_shift($parameters);
@@ -159,12 +161,15 @@
 						foreach($hooks as $cb) {
 							if(self::$debugLevel & self::DEBUG_CALLS)
 								self::debug("Calling " . self::export($cb) . " with priority $priority on filter $hook.");
+
 							array_unshift($parameters, $value);
-							$value = @call_user_func_array($cb, $parameters);
+							// this (possibly, depending on $parameters) makes an assumption about the /order/ of a map, a definite bad idea.
+							$value = @call_user_func_array($cb, array_values($parameters));
 							$count++;
 						}
 					}
 				}
+
 				if(self::$debugLevel & self::DEBUG_EVENTS)
 					self::debug("Ran $count filters for $hook. Result is " . self::export($value) . ".");
 			}
